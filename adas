@@ -1,0 +1,26 @@
+[1mdiff --git a/_posts/create.exe b/_posts/create.exe[m
+[1mdeleted file mode 100644[m
+[1mindex beedea5..0000000[m
+Binary files a/_posts/create.exe and /dev/null differ
+[1mdiff --git a/index.html b/index.html[m
+[1mindex 8a9598a..9b71335 100644[m
+[1m--- a/index.html[m
+[1m+++ b/index.html[m
+[36m@@ -10,7 +10,7 @@[m [mtitle:My blog[m
+ -->[m
+ <html>[m
+ 	<head>[m
+[31m-		<title>Joway.W</title>[m
+[32m+[m		[32m<title>Yongxun.Liu</title>[m
+ 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />[m
+ 		<meta name="description" content="" />[m
+ 		<meta name="keywords" content="" />[m
+[36m@@ -34,7 +34,7 @@[m [mtitle:My blog[m
+ [m
+ 				<!-- Header -->[m
+ 					<header id="header">[m
+[31m-						<h1>Joway.W</h1>[m
+[32m+[m						[32m<h1>Yongxun.Liu</h1>[m
+ 						<p> 沧浪之水清兮，可以濯吾缨。 沧浪之水浊兮，可以濯吾足。 </p>[m
+ 						<nav>[m
+ 							<ul>[m
