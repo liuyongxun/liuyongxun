@@ -12,7 +12,7 @@ tags: git
 了解错误的原因，并总结，对后面熟悉使用git命令会很有很有帮助。以下是我目前遇到的一些常见的错误，后期会
 继续补充。
 
-**1.对更改后的文件夹添加至缓存地址，出现如下错误**
+**1.对更改后的文件夹添加至缓存地址，出现如下错误** <br \>
 	$ git add .  
 	warning: You ran 'git add' with neither '-A (--all)' or '--ignore-removal',
 	whose behaviour will change in Git 2.0 with respect to paths you removed.
@@ -32,15 +32,15 @@ tags: git
 	$ git add .
 
 **2.对commit后的文件推送到远程上去的时候，出现如下问题** <br \>
-		$ git push origin gh-pages
-		To git@github.com:liuyongxun/liuyongxun.git
-		! [rejected]        gh-pages -> gh-pages (fetch first)
-		error: failed to push some refs to 'git@github.com:liuyongxun/liuyongxun.git'
-		hint: Updates were rejected because the remote contains work that you do
-		hint: not have locally. This is usually caused by another repository pushing
-		hint: to the same ref. You may want to first integrate the remote changes
-		hint: (e.g., 'git pull ...') before pushing again.
-		hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+	$ git push origin gh-pages
+	To git@github.com:liuyongxun/liuyongxun.git
+	! [rejected]        gh-pages -> gh-pages (fetch first)
+	error: failed to push some refs to 'git@github.com:liuyongxun/liuyongxun.git'
+	hint: Updates were rejected because the remote contains work that you do
+	hint: not have locally. This is usually caused by another repository pushing
+	hint: to the same ref. You may want to first integrate the remote changes
+	hint: (e.g., 'git pull ...') before pushing again.
+	hint: See the 'Note about fast-forwards' in 'git push --help' for details.
 
 #####**错误原因：**
 在之前我又过一次commit操作，但是并没有推送到远程仓库去。所以在进行第二次添加与推送的时候，是不能成功的
