@@ -26,6 +26,7 @@ tags: git
 	Run 'git status' to check the paths you removed from your working tree.
 
 #####**错误原因：**
+	
 #####**解决办法：**
 	$ git add -A
 	$ git add --ignore-removal
