@@ -28,30 +28,29 @@ tags: git
 #####**解决办法：**
 	$ git add -A
 	$ git add --ignore-removal
-再运行代码就成功了：
+再运行代码就成功了：<br \>
 	$ git add .
 
-**2.对commit后的文件推送到远程上去的时候，出现如下问题**
-	$ git push origin gh-pages
-	To git@github.com:liuyongxun/liuyongxun.git
-	! [rejected]        gh-pages -> gh-pages (fetch first)
-	error: failed to push some refs to 'git@github.com:liuyongxun/liuyongxun.git'
-	hint: Updates were rejected because the remote contains work that you do
-	hint: not have locally. This is usually caused by another repository pushing
-	hint: to the same ref. You may want to first integrate the remote changes
-	hint: (e.g., 'git pull ...') before pushing again.
-	hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+**2.对commit后的文件推送到远程上去的时候，出现如下问题** <br \>
+		$ git push origin gh-pages
+		To git@github.com:liuyongxun/liuyongxun.git
+		! [rejected]        gh-pages -> gh-pages (fetch first)
+		error: failed to push some refs to 'git@github.com:liuyongxun/liuyongxun.git'
+		hint: Updates were rejected because the remote contains work that you do
+		hint: not have locally. This is usually caused by another repository pushing
+		hint: to the same ref. You may want to first integrate the remote changes
+		hint: (e.g., 'git pull ...') before pushing again.
+		hint: See the 'Note about fast-forwards' in 'git push --help' for details.
 
 #####**错误原因：**
 在之前我又过一次commit操作，但是并没有推送到远程仓库去。所以在进行第二次添加与推送的时候，是不能成功的
 ，具体原理见 git push -help 中 Note about fast-forwards 内容
 
 #####**解决办法：**
-第一种办法：强行推送：
-	$ git push -f  origin gh-pages
-第二种办法：
-先将已提交的文件与现有文件进行融合：
-	$ git pull
-然后再执行命令：
-	$ git push
-
+第一种办法：强行推送：<br \>
+		$ git push -f  origin gh-pages
+第二种办法：<br \>
+先将已提交的文件与现有文件进行融合：<br \>
+		$ git pull
+然后再执行命令：<br \>
+		$ git push
