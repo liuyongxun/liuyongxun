@@ -5,8 +5,6 @@ comments: true
 share: true
 tags: R
 ---
-###*拟牛顿算法的R语言程序*
-
 ####*获取数据*
 	setwd("C:\\Users\\Admin\\Desktop\\任婧论文程序问题");
 	data<-read.csv("data.csv");
