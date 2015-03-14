@@ -5,3 +5,222 @@ comments: true
 share: true
 tags: R
 ---
+###*拟牛顿算法的R语言程序*
+
+####*获取数据*
+	setwd("C:\\Users\\Admin\\Desktop\\任婧论文程序问题");
+	data<-read.csv("data.csv");
+	r=data[,2];                                        
+	t=c(1:299);                                                                 
+	a=0.95                  
+#### *Symmetric absolute value model*
+
+	beta1=runif(10000);
+	beta2=runif(10000);
+	beta3=runif(10000);
+	beta=matrix(c(beta1,beta2,beta3),ncol=3); 
+	RQ=rep(0,10000);
+	VaR=rep(0,299);
+	VaR[1]<-r[length(r)*0.95];     ######VAR的初始值
+	fun<-function(x){
+	for(i in 2:299){
+		VaR[i]=x[1]+x[2]*VaR[i-1]+x[3]*abs(r[i-1])
+	}
+	a=rep(0,299);b=rep(0,299);
+	for(k in 1:299){
+		if(r[k]<VaR[k]){
+		a[k]=0.95*abs(r[k]-VaR[k])
+		}
+		if(r[k]>VaR[k]){
+		b[k]=(1-0.95)*abs(r[k]-VaR[k])
+		}
+	}
+	return(sum(a)+sum(b))
+	}
+	system.time(RQ<-apply(beta,1,fun))
+	y=sort(RQ)[1:10];                      
+	index=rep(0,10);
+	####定位最小RQ值所对应的序号
+	for(i in 1:10){
+	index[i]=which(RQ==y[i],arr.ind=T)
+	}
+	####获得其最小RQ值所对应的参数向量
+	beta_test=matrix(rep(0,30),ncol=3,nrow=10);
+	for(i in 1:10){
+	beta_test[i,]=beta[index[i],]
+	}
+	####开始进行拟牛顿算法
+	Object<-function(x){
+	####使用递归
+	VaR_fun<-function(t){
+		if(t==1){
+		return (VaR[1])
+			}
+		else{
+			return(x[1]+x[2]*VaR_fun(t-1)+x[3]*abs(r[t-1]))
+			}
+		}
+	####生成Object函数
+		m=0;n=0;
+		for (i in 1:299){
+			if(r[i]>VaR[i]){
+				m=m+(0.95*abs(r[i]-VaR_fun(i)))
+			}
+			if(r[i]<VaR[i]){
+				n=n+((1-0.95)*abs(r[i]-VaR_fun(i)))
+			}
+		}
+		return(m+n)
+	}
+	library(stats)
+	beta_optim<-matrix(rep(0,30),ncol=3,nrow=10)
+	RQ_optim<-rep(0,10)
+	for(i in 1:10){
+	model<-optim(c(beta_test[i,1],beta_test[i,2],beta_test[i,3]),Object,gr=NULL,method="BFGS",hessian=TRUE)
+	beta_optim[i,]<-model$par 
+	RQ_optim[i]<-model$value 
+	}
+	index=which(RQ_optim==min(RQ_optim),arr.ind=T)
+	beta_optim_best<-beta_optim[index,]
+
+####*A symmetric slope model*		
+
+	beta1=runif(10000);
+	beta2=runif(10000);
+	beta3=runif(10000);
+	beta4=runif(10000);
+	beta=matrix(c(beta1,beta2,beta3,beta4),ncol=4); 
+	RQ=rep(0,10000);
+	VaR=rep(0,299);
+	VaR[1]<-r[length(r)*0.95];     ######VAR的初始值
+	fun<-function(x){
+	for(i in 2:299){
+		VaR[i]=x[1]+x[2]*VaR[i-1]+x[3]*max(r[i-1],0)-x[4]*min(r[i-1],0)
+	}
+	a=rep(0,299);b=rep(0,299);
+	for(k in 1:299){
+		if(r[k]<VaR[k]){
+		a[k]=0.95*abs(r[k]-VaR[k])
+		}
+		if(r[k]>VaR[k]){
+		b[k]=(1-0.95)*abs(r[k]-VaR[k])
+		}
+	}
+	return(sum(a)+sum(b))
+	}
+	system.time(RQ<-apply(beta,1,fun))
+	y=sort(RQ)[1:10];                      
+	index=rep(0,10);
+	####定位最小RQ值所对应的序号
+	for(i in 1:10){
+	index[i]=which(RQ==y[i],arr.ind=T)
+	}
+	####获得其最小RQ值所对应的参数向量
+	beta_test=matrix(rep(0,40),ncol=4,nrow=10);
+	for(i in 1:10){
+	beta_test[i,]=beta[index[i],]
+	}
+	####开始进行拟牛顿算法
+	Object<-function(x){
+	####使用递归
+	VaR_fun<-function(t){
+		if(t==1){
+		return (VaR[1])
+			}
+		else{
+			return(x[1]+x[2]*VaR[t-1]+x[3]*max(r[t-1],0)-x[4]*min(r[t-1],0))
+			}
+		}
+	####生成Object函数
+		m=0;n=0;
+		for (i in 1:299){
+			if(r[i]>VaR[i]){
+				m=m+(0.95*abs(r[i]-VaR_fun(i)))
+			}
+			if(r[i]<VaR[i]){
+				n=n+((1-0.95)*abs(r[i]-VaR_fun(i)))
+			}
+		}
+		return(m+n)
+	}
+	library(stats)
+	beta_optim<-matrix(rep(0,40),ncol=4,nrow=10)
+	RQ_optim<-rep(0,10)
+	for(i in 1:10){
+	model<-optim(c(beta_test[i,1],beta_test[i,2],beta_test[i,3],beta_test[i,4]),Object,gr=NULL,method="BFGS",hessian=TRUE)
+	beta_optim[i,]<-model$par 
+	RQ_optim[i]<-model$value 
+	}
+	index=which(RQ_optim==min(RQ_optim),arr.ind=T)
+	beta_optim_best<-beta_optim[index,]
+
+####*Indirect GARCH(1,1) model*
+
+	beta1=runif(10000);
+	beta2=runif(10000);
+	beta3=runif(10000);
+	beta=matrix(c(beta1,beta2,beta3),ncol=3); 
+	RQ=rep(0,10000);
+	VaR=rep(0,299);
+	VaR[1]<-r[length(r)*0.95];     ######VAR的初始值
+	fun<-function(x){
+	for(i in 2:299){
+		VaR[i]=(x[1]+x[2]*VaR[i-1]^2+x[3]*r[i-1]^2)^2
+	}
+	a=rep(0,299);b=rep(0,299);
+	for(k in 1:299){
+		if(r[k]< VaR[k]){
+		a[k]=0.95*abs(r[k]-VaR[k])
+		}
+		else{
+		b[k]=(1-0.95)*abs(r[k]-VaR[k])
+		}
+	}
+	return(sum(a)+sum(b))
+	}
+	system.time(RQ<-apply(beta,1,fun))
+	y=sort(RQ)[1:10];                      
+	index=rep(0,10);
+	####定位最小RQ值所对应的序号
+	for(i in 1:10){
+	index[i]=which(RQ==y[i],arr.ind=T)
+	}
+	####获得其最小RQ值所对应的参数向量
+	beta_test=matrix(rep(0,30),ncol=3,nrow=10);
+	for(i in 1:10){
+	beta_test[i,]=beta[index[i],]
+	}
+	####开始进行拟牛顿算法
+	Object<-function(x){
+	####使用递归
+	VaR_fun<-function(t){
+		if(t==1){
+		return (VaR[1])
+			}
+		else{
+			return((x[1]+x[2]*VaR[t-1]^2+x[3]*r[t-1]^2)^2)
+			}
+		}
+	####生成Object函数
+		m=0;n=0;
+		for (i in 1:299){
+			if(r[i]>VaR[i]){
+				m=m+(0.95*abs(r[i]-VaR_fun(i)))
+			}
+			if(r[i]<VaR[i]){
+				n=n+((1-0.95)*abs(r[i]-VaR_fun(i)))
+			}
+		}
+		return(m+n)
+	}
+	library(stats)
+	beta_optim<-matrix(rep(0,30),ncol=3,nrow=10)
+	RQ_optim<-rep(0,10)
+	for(i in 1:10){
+	model<-optim(c(beta_test[i,1],beta_test[i,2],beta_test[i,3]),Object,gr=NULL,method="BFGS",hessian=TRUE)
+	beta_optim[i,]<-model$par 
+	RQ_optim[i]<-model$value 
+	}
+	index=which(RQ_optim==min(RQ_optim),arr.ind=T)
+	beta_optim_best<-beta_optim[index,]
+
