@@ -16,11 +16,10 @@ tags: R
 
 	RQ=∑_(r_(t≥Q_t (θ)))θ|r_t-VaR_t (θ)|+∑_(r_(t<Q_t (θ)))(1-θ)|r_t-VaR_t (θ)|		
 	
-而每个模型的参数是通过最小化以下函数得到的：		
-
+而每个模型的参数是通过最小化以下函数得到的：
+	
 	min_β {∑_(r_(t≥Q_t (θ)))θ|r_t-VaR_t (θ)|+∑_(r_(t<Q_t (θ)))(1-θ)|r_t-VaR_t (θ)|}			
-
-
+	
 在这里显然涉及到方程求解最优值，根据已有的文献，是采用了拟牛顿算法来求解最小值的，下面给出了三个模型
 求分别求最优值的R语言程序。		
 
@@ -57,8 +56,10 @@ tags: R
 	}
 	return(sum(a)+sum(b))
 	}
-	system.time(RQ<-apply(beta,1,fun))
-#####**第四步选取较小的10组RQ值，并把对应的参数向量作为Quasi_Newton算法的初始值
+	system.time(RQ<-apply(beta,1,fun))		
+	
+#####**第四步选取较小的10组RQ值，并把对应的参数向量作为Quasi_Newton算法的初始值**		
+
 	y=sort(RQ)[1:10];                      
 	index=rep(0,10);
 	####定位最小RQ值所对应的序号
@@ -69,8 +70,10 @@ tags: R
 	beta_test=matrix(rep(0,30),ncol=3,nrow=10);
 	for(i in 1:10){
 	beta_test[i,]=beta[index[i],]
-	}
-#####**第五步开始进行拟牛顿算法**
+	}		
+	
+#####**第五步开始进行拟牛顿算法**		
+
 	Object<-function(x){
 	####**使用递归**
 	VaR_fun<-function(t){
@@ -101,18 +104,22 @@ tags: R
 	model<-optim(c(beta_test[i,1],beta_test[i,2],beta_test[i,3]),Object,gr=NULL,method="BFGS",hessian=TRUE)
 	beta_optim[i,]<-model$par 
 	RQ_optim[i]<-model$value 
-	}
-#####**选取RQ最小时所对应的参数向量作为模型的最终估计值
+	}		
+	
+#####**选取RQ最小时所对应的参数向量作为模型的最终估计值**		
+
 	index=which(RQ_optim==min(RQ_optim),arr.ind=T)
 	beta_optim_best<-beta_optim[index,]				
     print(beta_optim_best)		
-####*模型计算结果*    
+	
+####**模型计算结果**		
+   
   ![参数值](C:\Users\Admin\AppData\Local\Temp\Rar$EXa0.552\JPG To Html 1.0\Photo.html)   
   ![最小RQ值](C:\Users\Admin\AppData\Local\Temp\Rar$EXa0.552\JPG To Html 1.0\Photo.html)  		
 
-####**下面的模型步骤同上**		
+####**下面的模型步骤同上**			
 
-####*A symmetric slope model*		
+####**A symmetric slope model**				
 
 	beta1=runif(10000);
 	beta2=runif(10000);
