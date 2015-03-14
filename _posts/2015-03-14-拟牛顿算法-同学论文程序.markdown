@@ -79,7 +79,12 @@ tags: R
 	RQ_optim[i]<-model$value 
 	}
 	index=which(RQ_optim==min(RQ_optim),arr.ind=T)
-	beta_optim_best<-beta_optim[index,]
+	beta_optim_best<-beta_optim[index,]		
+
+####*模型计算结果*    
+  ![参数值](model1.jpg)   
+  
+  ![最小RQ值](model1 result.jpg)  
 
 ####*A symmetric slope model*		
 
