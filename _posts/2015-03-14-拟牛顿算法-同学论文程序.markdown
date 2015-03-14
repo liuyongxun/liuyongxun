@@ -82,9 +82,9 @@ tags: R
 	beta_optim_best<-beta_optim[index,]		
 
 ####*模型计算结果*    
-  ![参数值](model1.jpg)   
+  ![参数值](C:\Users\Admin\AppData\Local\Temp\Rar$EXa0.552\JPG To Html 1.0\Photo.html)   
   
-  ![最小RQ值](model1 result.jpg)  
+  ![最小RQ值](C:\Users\Admin\AppData\Local\Temp\Rar$EXa0.552\JPG To Html 1.0\Photo.html)  
 
 ####*A symmetric slope model*		
 
