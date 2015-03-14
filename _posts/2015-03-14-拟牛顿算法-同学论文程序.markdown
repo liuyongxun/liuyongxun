@@ -29,7 +29,7 @@ tags: R
 	r=data[,2];                                        
 	t=c(1:299);                                                                 
 	a=0.95                  
-#### *Symmetric absolute value model*		
+####**Symmetric absolute value model**			
 
 #####**第一步：对每个待估参数生产10000个服从U(0，1)的随机参数向量**
 	beta1=runif(10000);
@@ -190,7 +190,7 @@ tags: R
 	index=which(RQ_optim==min(RQ_optim),arr.ind=T)
 	beta_optim_best<-beta_optim[index,]
 
-####*Indirect GARCH(1,1) model*
+####**Indirect GARCH(1,1) model**
 
 	beta1=runif(10000);
 	beta2=runif(10000);
