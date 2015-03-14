@@ -5,21 +5,41 @@ comments: true
 share: true
 tags: R
 ---
+###**程序的目标**		
+本文的主要目标是从下述三个CAViaR模型中选取哪一个更适合刻画收益率数据		
+	Symmetric absolute value:VaR_t (θ)=β_1+β_2 VaR_(t-1) (θ)+β_3 |r_(t-1) |			
+	A symmetric slope:VaR_t (θ)=β_1+β_2 VaR_(t-1) (θ)+β_3  max⁡(r_(t-1),0)-β_4 min⁡(r_(t-1),0)		
+	Indirect GARCH(1,1):VaR_t (θ)=(β_1+β_2 VaR_(t-1)^2 (θ)+β_3 r_(t-1)^2)〗^2		
+	
+判断的标准是哪个模型的RQ值最小，哪个模型就是最合适的，其中：		
+
+	RQ=∑_(r_(t≥Q_t (θ)))θ|r_t-VaR_t (θ)|+∑_(r_(t<Q_t (θ)))(1-θ)|r_t-VaR_t (θ)|		
+	
+而每个模型的参数是通过最小化以下函数得到的：		
+
+min_β {∑_(r_(t≥Q_t (θ)))θ|r_t-VaR_t (θ)|+∑_(r_(t<Q_t (θ)))(1-θ)|r_t-VaR_t (θ)|}		
+
+在这里显然涉及到方程求解最优值，根据已有的文献，是采用了拟牛顿算法来求解最小值的，下面给出了三个模型
+求分别求最优值的R语言程序。		
+
 ####*获取数据*
 	setwd("C:\\Users\\Admin\\Desktop\\任婧论文程序问题");
 	data<-read.csv("data.csv");
 	r=data[,2];                                        
 	t=c(1:299);                                                                 
 	a=0.95                  
-#### *Symmetric absolute value model*
+#### *Symmetric absolute value model*		
 
+#####**第一步：对每个待估参数生产10000个服从U(0，1)的随机参数向量**
 	beta1=runif(10000);
 	beta2=runif(10000);
 	beta3=runif(10000);
 	beta=matrix(c(beta1,beta2,beta3),ncol=3); 
-	RQ=rep(0,10000);
-	VaR=rep(0,299);
-	VaR[1]<-r[length(r)*0.95];     ######VAR的初始值
+#####**第二步：选取样本数据中前处于95%位置的数据作为VaR的初始值**
+	VaR=rep(0,299);			
+	VaR[1]<-r[length(r)*0.95];
+#####**第三步：对每组参数分别计算RQ值**			
+	RQ=rep(0,10000);	
 	fun<-function(x){
 	for(i in 2:299){
 		VaR[i]=x[1]+x[2]*VaR[i-1]+x[3]*abs(r[i-1])
@@ -36,6 +56,7 @@ tags: R
 	return(sum(a)+sum(b))
 	}
 	system.time(RQ<-apply(beta,1,fun))
+#####**第四步选取较小的10组RQ值，并把对应的参数向量作为Quasi_Newton算法的初始值
 	y=sort(RQ)[1:10];                      
 	index=rep(0,10);
 	####定位最小RQ值所对应的序号
@@ -47,9 +68,9 @@ tags: R
 	for(i in 1:10){
 	beta_test[i,]=beta[index[i],]
 	}
-	####开始进行拟牛顿算法
+#####**第五步开始进行拟牛顿算法**
 	Object<-function(x){
-	####使用递归
+	####**使用递归**
 	VaR_fun<-function(t){
 		if(t==1){
 		return (VaR[1])
@@ -58,7 +79,7 @@ tags: R
 			return(x[1]+x[2]*VaR_fun(t-1)+x[3]*abs(r[t-1]))
 			}
 		}
-	####生成Object函数
+	####**生成Object函数**
 		m=0;n=0;
 		for (i in 1:299){
 			if(r[i]>VaR[i]){
@@ -74,17 +95,20 @@ tags: R
 	beta_optim<-matrix(rep(0,30),ncol=3,nrow=10)
 	RQ_optim<-rep(0,10)
 	for(i in 1:10){
+	####**使用optim函数，进行Qusai_Newton算法
 	model<-optim(c(beta_test[i,1],beta_test[i,2],beta_test[i,3]),Object,gr=NULL,method="BFGS",hessian=TRUE)
 	beta_optim[i,]<-model$par 
 	RQ_optim[i]<-model$value 
 	}
+#####**选取RQ最小时所对应的参数向量作为模型的最终估计值
 	index=which(RQ_optim==min(RQ_optim),arr.ind=T)
-	beta_optim_best<-beta_optim[index,]		
-
+	beta_optim_best<-beta_optim[index,]				
+    print(beta_optim_best)		
 ####*模型计算结果*    
   ![参数值](C:\Users\Admin\AppData\Local\Temp\Rar$EXa0.552\JPG To Html 1.0\Photo.html)   
-  
-  ![最小RQ值](C:\Users\Admin\AppData\Local\Temp\Rar$EXa0.552\JPG To Html 1.0\Photo.html)  
+  ![最小RQ值](C:\Users\Admin\AppData\Local\Temp\Rar$EXa0.552\JPG To Html 1.0\Photo.html)  		
+
+####**下面的模型步骤同上**		
 
 ####*A symmetric slope model*		
 
