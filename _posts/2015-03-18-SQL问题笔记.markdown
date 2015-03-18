@@ -1,0 +1,87 @@
+---
+layout: post
+title: "SQL笔记"
+comments: true
+share: true
+tags: SQL
+---
+###**SQL笔记**		
+最近在接触专题分析的取数工作，这就需要大量编写SQL语句，这对我来说是一个很好的段落SQL的机会。
+在刚来实习的时候对SQL培训过一段时间，在联通项目组大概半年的时间，也偶尔使用到SQL。写SQL只是熟悉表面的熟悉而已。懂得常用的SQL函数，以及如何去做内连接，左外连接。
+但是今天再写取数SQL的时候，却闹出了一个大笑话，居然搞不清楚左连接时如何进行操作的，导致自己强行使用了一个很粗鲁的方法（UNION）去实现简单几句LEFT JOIN可以获得到数据。
+下面给出例子，同时吸取教训，认真了解SQL进行左连接的原理。		
+
+####**案例**		
+
+查询目的：对表*PD_DLAB.#LYX_TEMP1*增加一个字段来判断用户是否为4G用户。表*PD_DATA.PRD_SERV_4G_INFO_DAY*是现有的4G用户信息表，这就需要将表TMP1与4G_INFO_DAY表进行关联。			
+
+#####**采用UNION函数**#####		
+
+下面是我写的最初的代码，采用的是*UNION*函数 ：							
+
+		SEL SUB_ID 
+			,BILL_ID 
+			,ACCT_ID
+			,Billing_Cycle_Id 
+			,MANAGEMENT_ID 
+			,CDE_MHIGH_FLAG 
+			,CDE_CHANGE_4G_FLAG
+			,1 AS LT_USR_FLAG
+		FROM  PD_DLAB.#LYX_TEMP1 A
+		WHERE Billing_Cycle_Id = 201501
+		------AND MANAGEMENT_ID = '10,001'
+		AND   BILL_ID IN (
+				SEL BILL_ID 
+				FROM PD_DATA.PRD_SERV_4G_INFO_DAY ) 
+		UNION 
+		
+		SEL SUB_ID 
+			,BILL_ID 
+			,ACCT_ID
+			,Billing_Cycle_Id 
+			,MANAGEMENT_ID 
+			,CDE_MHIGH_FLAG 
+			,CDE_CHANGE_4G_FLAG
+			,0	AS LT_USR_FLAG
+		FROM PD_DLAB.#LYX_TEMP1 A
+		WHERE Billing_Cycle_Id = 201501
+		------AND MANAGEMENT_ID = '10,001'
+		AND BILL_ID NOT IN (
+				SEL BILL_ID 
+				FROM PD_DATA.PRD_SERV_4G_INFO_DAY)			
+				
+上述代码的原理：当PD_DLAB.#LYX_TEMP1表中SUB_ID的字段不存在于PD_DATA.PRD_SERV_4G_INFO_DAY表中的SUB_ID字段的时候，取值为 0 并命名该字段为LT_USR_FLAG；
+同理当当PD_DLAB.#LYX_TEMP1表中SUB_ID的字段存在于PD_DATA.PRD_SERV_4G_INFO_DAY表中的SUB_ID字段的时候，取值为 1 ，也命名为LT_USR_FLAG；
+最后使用UNION操作，将两个结果进行合并。
+
+#####**采用LEFT JOIN 函数**#####		
+
+		SEL A.*
+			,CASE  
+				WHEN  SUB_ID  IS NULL  THEN  0
+				ELSE  1 
+			END						AS  LT_USR_FLAG
+		FROM  (	SEL * 
+				FROM PD_DLAB.#LYX_TEMP1
+				WHERE Billing_Cycle_Id = 201501  ) A 
+		LEFT JOIN (	SEL * 
+					FROM PD_DATA.PRD_SERV_4G_INFO_DAY
+					WHERE Billing_Cycle_Id = 201501 )B
+		ON A.SUB_ID = B.SUB_ID			
+
+这两个程序可以得到相同的结果，但是可以明显看出来，使用LEFT JOIN 函数之后程序更加简洁，可读性更强了。
+同时使用LEFT JOIN函数的这个程序要比使用UNION函数的程序的运行时间少了很多。我这张表的数据是上海移动全网用户的数据，大概有三千多万的数据，
+LEFT JOIN 用来大概20s ，而UNION用了超过2分钟。在UNION的那个程序中还有一个影响查询速度的地方在于使用IN函数。对应IN函数，SQL的处理机制是先讲这两张表
+放入到一个POOL池中，然后再去扫描匹配，这样程序运行的时间自然会增高不少，尤其是当数据越来越大的时候。
+
+####**出现这种的错误在哪里？**####			
+
+在写这个程序之前，也想到过使用左连接，毕竟这个当需要进行表之间关联的时候是经常用到的。但是由于对其使用之后产生的结果形式是什么样的，并没有什么概念。
+所以就没有去考虑使用这个函数。既然傻傻呼呼的想到了UNION的方式，把整个SQL的运行效率抛到一边，哪样可以实现我的目的，就哪样去写代码。
+
+
+
+
+
+
+
