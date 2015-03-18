@@ -13,9 +13,9 @@ tags: SQL
 
 ####**案例**		
 
-查询目的：对表*PD_DLAB.#LYX_TEMP1*增加一个字段来判断用户是否为4G用户。表*PD_DATA.PRD_SERV_4G_INFO_DAY*是现有的4G用户信息表，这就需要将表TMP1与4G_INFO_DAY表进行关联。			
+查询目的：对表*PD\_DLAB.\#LYX_TEMP1*增加一个字段来判断用户是否为4G用户。表*PD\_DATA\.PRD\_SERV\_4G\_INFO\_DAY*是现有的4G用户信息表，这就需要将表TMP1与4G\_INFO\_DAY表进行关联。			
 
-#####**采用UNION函数**#####		
+#####**采用UNION函数**	
 
 下面是我写的最初的代码，采用的是*UNION*函数 ：							
 
@@ -51,10 +51,10 @@ tags: SQL
 				FROM PD_DATA.PRD_SERV_4G_INFO_DAY)			
 				
 上述代码的原理：当PD_DLAB.#LYX_TEMP1表中SUB_ID的字段不存在于PD_DATA.PRD_SERV_4G_INFO_DAY表中的SUB_ID字段的时候，取值为 0 并命名该字段为LT_USR_FLAG；
-同理当当PD_DLAB.#LYX_TEMP1表中SUB_ID的字段存在于PD_DATA.PRD_SERV_4G_INFO_DAY表中的SUB_ID字段的时候，取值为 1 ，也命名为LT_USR_FLAG；
+同理当当PD\_DLAB\.\#LYX\_TEMP1表中SUB\_ID的字段存在于PD\_DATA\.PRD\_SERV\_4G\_INFO\_DAY表中的SUB\_ID字段的时候，取值为 1 ，也命名为LT\_USR\_FLAG；
 最后使用UNION操作，将两个结果进行合并。
 
-#####**采用LEFT JOIN 函数**#####		
+#####**采用LEFT JOIN 函数**		
 
 		SEL A.*
 			,CASE  
@@ -74,7 +74,7 @@ tags: SQL
 LEFT JOIN 用来大概20s ，而UNION用了超过2分钟。在UNION的那个程序中还有一个影响查询速度的地方在于使用IN函数。对应IN函数，SQL的处理机制是先讲这两张表
 放入到一个POOL池中，然后再去扫描匹配，这样程序运行的时间自然会增高不少，尤其是当数据越来越大的时候。
 
-####**出现这种的错误在哪里？**####			
+####**出现这种的错误在哪里？**			
 
 在写这个程序之前，也想到过使用左连接，毕竟这个当需要进行表之间关联的时候是经常用到的。但是由于对其使用之后产生的结果形式是什么样的，并没有什么概念。
 所以就没有去考虑使用这个函数。既然傻傻呼呼的想到了UNION的方式，把整个SQL的运行效率抛到一边，哪样可以实现我的目的，就哪样去写代码。
