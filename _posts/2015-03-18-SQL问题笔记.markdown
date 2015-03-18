@@ -13,7 +13,7 @@ tags: SQL
 
 ####**案例**		
 
-查询目的：对表*PD\_DLAB.\#LYX\_TEMP1*增加一个字段来判断用户是否为4G用户。表*PD\_DATA\.PRD\_SERV\_4G\_INFO\_DAY*是现有的4G用户信息表，这就需要将表TMP1与4G\_INFO\_DAY表进行关联。			
+查询目的：对表*库名.\#LYX\_TEMP1*增加一个字段来判断用户是否为4G用户。表*库名\.PRD\_SERV\_4G\_INFO\_DAY*是现有的4G用户信息表，这就需要将表TMP1与4G\_INFO\_DAY表进行关联。			
 
 ####**采用UNION函数**	
 
@@ -50,8 +50,8 @@ tags: SQL
 				SEL BILL_ID 
 				FROM *库名*.PRD_SERV_4G_INFO_DAY)			
 				
-上述代码的原理：当PD\_DLAB\.\#LYX\_TEMP1表中SUB\_ID的字段不存在于PD\_DATA\.PRD\_SERV\_4G\_INFO\_DAY表中的SUB\_ID字段的时候，取值为 0 并命名该字段为LT\_USR\_FLAG；
-同理当当PD\_DLAB\.\#LYX\_TEMP1表中SUB\_ID的字段存在于PD\_DATA\.PRD\_SERV\_4G\_INFO\_DAY表中的SUB\_ID字段的时候，取值为 1 ，也命名为LT\_USR\_FLAG；
+上述代码的原理：当库名\.\#LYX\_TEMP1表中SUB\_ID的字段不存在于库名\.PRD\_SERV\_4G\_INFO\_DAY表中的SUB\_ID字段的时候，取值为'0'并命名该字段为LT\_USR\_FLAG；
+同理当库名\.\#LYX\_TEMP1表中SUB\_ID的字段存在于库名\.PRD\_SERV\_4G\_INFO\_DAY表中的SUB\_ID字段的时候，取值为 1 ，也命名为LT\_USR\_FLAG；
 最后使用UNION操作，将两个结果进行合并。
 
 #####**采用LEFT JOIN 函数**		
