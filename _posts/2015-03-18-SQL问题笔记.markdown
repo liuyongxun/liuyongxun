@@ -54,7 +54,7 @@ tags: SQL
 同理当库名\.\#LYX\_TEMP1表中SUB\_ID的字段存在于库名\.PRD\_SERV\_4G\_INFO\_DAY表中的SUB\_ID字段的时候，取值为 1 ，也命名为LT\_USR\_FLAG；
 最后使用UNION操作，将两个结果进行合并。	
 
-#####**采用LEFT JOIN 函数**		
+####**采用LEFT JOIN 函数**		
 
 		SEL A.*
 			,CASE  
