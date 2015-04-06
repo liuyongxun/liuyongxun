@@ -18,7 +18,8 @@ tags: R
 		col3<- rpois(12^5,3)
 		col4<- rchisq(12^5,2)
 		df<-data.frame(col1,col2,col3,col4)
-对df增加一列值，当df每一行的前四列值想加大于4的时候，其对应的第五行值表示为"greate_than_4",否则表示为"lesser_than_4",下面是R的处理程序；
+对df增加一列值，当df每一行的前四列值想加大于4的时候，其对应的第五行值表示为"greate_than_4",否则表示为"lesser_than_4",下面是R的处理程序；			
+
 		system.time({
 				for (i in 1:nrow(df)){
 				if((df[i,1]+df[i,2]+df[i,3]+df[i,4])>4) {df[i,5]<-"great_than_4"}
